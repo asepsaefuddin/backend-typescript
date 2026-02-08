@@ -47,6 +47,9 @@ cd backend-typescript
 # Install dependencies
 npm install
 
+# lint
+npm run lint
+
 # Create the database and configure it according to the settings in config and app.module
 
 # Run database migrations if needed
