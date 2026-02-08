@@ -7,7 +7,10 @@ import type {
 import { Post } from '../posts/post.model';
 
 @Table({ tableName: 'users' })
-export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
+> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

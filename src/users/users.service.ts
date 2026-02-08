@@ -1,13 +1,15 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.model';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User) private userModel: typeof User,
-  ) {}
+  constructor(@InjectModel(User) private userModel: typeof User) {}
 
   async create(email: string, password: string) {
     const existing = await this.userModel.findOne({ where: { email } });
@@ -42,7 +44,9 @@ export class UsersService {
     if (email) updateData.email = email;
     if (password) updateData.password = await bcrypt.hash(password, 10);
 
-    const [affected] = await this.userModel.update(updateData, { where: { id } });
+    const [affected] = await this.userModel.update(updateData, {
+      where: { id },
+    });
     if (affected === 0) {
       throw new NotFoundException('User tidak ditemukan');
     }

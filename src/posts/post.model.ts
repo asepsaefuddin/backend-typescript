@@ -1,4 +1,11 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
 import type {
   InferAttributes,
   InferCreationAttributes,
@@ -7,7 +14,10 @@ import type {
 import { User } from '../users/user.model';
 
 @Table({ tableName: 'posts' })
-export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
+export class Post extends Model<
+  InferAttributes<Post>,
+  InferCreationAttributes<Post>
+> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

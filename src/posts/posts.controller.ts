@@ -1,6 +1,25 @@
-import { Controller, Post, Get, Body, UseGuards, Req, Param, Patch, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  UseGuards,
+  Req,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtPayload } from '../auth/jwt.strategy';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+
+interface RequestWithUser extends Request {
+  user: JwtPayload;
+}
 
 @Controller('posts')
 export class PostsController {
@@ -8,12 +27,8 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Req() req, @Body() body) {
-    return this.postsService.create(
-      body.title,
-      body.content,
-      req.user.userId,
-    );
+  create(@Req() req: RequestWithUser, @Body() body: CreatePostDto) {
+    return this.postsService.create(body.title, body.content, req.user.userId);
   }
 
   @Get()
@@ -28,7 +43,7 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdatePostDto) {
     return this.postsService.update(id, body.title, body.content);
   }
 

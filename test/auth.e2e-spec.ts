@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import request = require('supertest');
+import request from 'supertest';
 
 describe('E2E Auth + JWT', () => {
   let app: INestApplication;
@@ -21,7 +21,7 @@ describe('E2E Auth + JWT', () => {
   });
 
   it('REGISTER user', async () => {
-    await request(app.getHttpServer())
+    await request(app.getHttpServer() as Parameters<typeof request>[0])
       .post('/users')
       .send({
         email: 'asepsangrajaiblis@yahoo.com',
@@ -31,7 +31,9 @@ describe('E2E Auth + JWT', () => {
   });
 
   it('LOGIN user → get JWT', async () => {
-    const res = await request(app.getHttpServer())
+    const res = await request(
+      app.getHttpServer() as Parameters<typeof request>[0],
+    )
       .post('/auth/login')
       .send({
         email: 'asepsangrajaiblis@yahoo.com',
@@ -39,11 +41,12 @@ describe('E2E Auth + JWT', () => {
       })
       .expect(201);
 
-    token = res.body.access_token;
+    const body = res.body as { access_token: string };
+    token = body.access_token;
   });
 
   it('ACCESS protected endpoint with JWT', async () => {
-    await request(app.getHttpServer())
+    await request(app.getHttpServer() as Parameters<typeof request>[0])
       .post('/posts')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -54,7 +57,7 @@ describe('E2E Auth + JWT', () => {
   });
 
   it('FAIL without JWT', async () => {
-    await request(app.getHttpServer())
+    await request(app.getHttpServer() as Parameters<typeof request>[0])
       .post('/posts')
       .send({
         title: 'Fail Post',

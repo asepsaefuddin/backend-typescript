@@ -5,9 +5,7 @@ import { User } from '../users/user.model';
 
 @Injectable()
 export class PostsService {
-  constructor(
-    @InjectModel(Post) private postModel: typeof Post,
-  ) {}
+  constructor(@InjectModel(Post) private postModel: typeof Post) {}
 
   create(title: string, content: string, userId: number) {
     return this.postModel.create({ title, content, userId });
@@ -36,10 +34,7 @@ export class PostsService {
   }
 
   async update(id: number, title?: string, content?: string) {
-    await this.postModel.update(
-      { title, content },
-      { where: { id } },
-    );
+    await this.postModel.update({ title, content }, { where: { id } });
     return this.findOne(id);
   }
 
