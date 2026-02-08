@@ -16,7 +16,7 @@ import { AppService } from './app.service';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      database: 'nest_api',
+      database: 'nest_db',
       models: [User, Post],
       autoLoadModels: true,
       synchronize: true,
