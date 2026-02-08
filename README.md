@@ -44,6 +44,9 @@ because it separates each part of the application so that the code is more struc
 git clone https://github.com/asepsaefuddin/backend-typescript.git
 cd backend-typescript
 
+# Copy the .env file from .env.example
+cp .env.example .env
+
 # Install dependencies
 npm install
 
