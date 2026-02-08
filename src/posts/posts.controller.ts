@@ -21,11 +21,11 @@ interface RequestWithUser extends Request {
   user: JwtPayload;
 }
 
+@UseGuards(JwtAuthGuard)
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req: RequestWithUser, @Body() body: CreatePostDto) {
     return this.postsService.create(body.title, body.content, req.user.userId);
@@ -41,13 +41,11 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdatePostDto) {
     return this.postsService.update(id, body.title, body.content);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.remove(id);
