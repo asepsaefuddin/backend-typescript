@@ -4,12 +4,12 @@ import { AppModule } from '../src/app.module';
 import request from 'supertest';
 
 describe('E2E Auth + JWT', () => {
-  let app: INestApplication;
-  let token = '';
+  let app: INestApplication; //inisialisasi
+  let token = ''; // menampung token
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule], // melakukan import module guard, provider
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -22,7 +22,7 @@ describe('E2E Auth + JWT', () => {
 
   it('REGISTER user', async () => {
     await request(app.getHttpServer() as Parameters<typeof request>[0])
-      .post('/users')
+      .post('/auth/register')
       .send({
         email: 'asepsangrajaiblis@yahoo.com',
         password: 'password123',
@@ -39,7 +39,7 @@ describe('E2E Auth + JWT', () => {
         email: 'asepsangrajaiblis@yahoo.com',
         password: 'password123',
       })
-      .expect(201);
+      .expect(200);
 
     const body = res.body as { access_token: string };
     token = body.access_token;
