@@ -1,0 +1,243 @@
+{
+  "info": {
+    "name": "Backend API",
+    "description": "Koleksi API untuk Backend TypeScript - mencakup Auth (Login, Register), CRUD Users, dan CRUD Posts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Endpoint untuk autentikasi - register dan login",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@mail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{base_url}}/auth/register",
+            "description": "Mendaftarkan user baru.\n\n**Request Body:**\n- `email` (string, required): Email user (format email valid)\n- `password` (string, required): Password minimal 6 karakter\n\n**Response Success (201):**\n```json\n{\n  \"message\": \"User berhasil dibuat\",\n  \"email\": \"user@mail.com\"\n}\n```\n\n**Response Error (409):** Email sudah terdaftar"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@mail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{base_url}}/auth/login",
+            "description": "Login user dan dapatkan JWT token.\n\n**Request Body:**\n- `email` (string, required): Email user\n- `password` (string, required): Password minimal 6 karakter\n\n**Response Success (201):**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n```\n\nToken otomatis disimpan ke variable `access_token` untuk request yang memerlukan auth."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "CRUD operations untuk Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@mail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{base_url}}/users",
+            "description": "Membuat user baru.\n\n**Request Body:**\n- `email` (string, required): Email user (format email valid)\n- `password` (string, required): Password minimal 6 karakter\n\n**Response Success (201):**\n```json\n{\n  \"message\": \"User berhasil dibuat\",\n  \"email\": \"newuser@mail.com\"\n}\n```"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/users",
+            "description": "Mendapatkan daftar semua users.\n\n**Response Success (200):**\n```json\n[\n  {\n    \"id\": 1,\n    \"email\": \"user@mail.com\",\n    \"createdAt\": \"2025-02-08T...\",\n    \"updatedAt\": \"2025-02-08T...\"\n  }\n]\n```\n\nPassword tidak ditampilkan dalam response."
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/users/1",
+            "description": "Mendapatkan detail user berdasarkan ID.\n\n**URL Parameters:**\n- `id` (number, required): ID user\n\n**Response Success (200):**\n```json\n{\n  \"id\": 1,\n  \"email\": \"user@mail.com\",\n  \"createdAt\": \"2025-02-08T...\",\n  \"updatedAt\": \"2025-02-08T...\"\n}\n```\n\n**Response Error (404):** User tidak ditemukan"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"updated@mail.com\",\n  \"password\": \"newpassword123\"\n}"
+            },
+            "url": "{{base_url}}/users/1",
+            "description": "Memperbarui data user.\n\n**URL Parameters:**\n- `id` (number, required): ID user yang akan diupdate\n\n**Request Body (semua optional):**\n- `email` (string, optional): Email baru\n- `password` (string, optional): Password baru (minimal 6 karakter)\n\n**Response Success (200):**\nMengembalikan object user yang telah diupdate (tanpa password)"
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/users/2",
+            "description": "Menghapus user berdasarkan ID.\n\n**URL Parameters:**\n- `id` (number, required): ID user yang akan dihapus\n\n**Response Success (200):**\n```json\n{\n  \"message\": \"User berhasil dihapus\",\n  \"deletedId\": 1\n}\n```\n\n**Response Error (404):** User tidak ditemukan"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "description": "CRUD operations untuk Posts - Create, Update, Delete memerlukan JWT token",
+      "item": [
+        {
+          "name": "Create Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Judul Post\",\n  \"content\": \"Konten dari post ini\"\n}"
+            },
+            "url": "{{base_url}}/posts",
+            "description": "Membuat post baru. **Membutuhkan JWT Token** (lakukan Login terlebih dahulu)\n\n**Headers:**\n- `Authorization: Bearer <token>`\n\n**Request Body:**\n- `title` (string, required): Judul post\n- `content` (string, required): Konten post\n\n**Response Success (201):**\nMengembalikan object post yang dibuat"
+          }
+        },
+        {
+          "name": "Get All Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/posts",
+            "description": "Mendapatkan daftar semua posts.\n\n**Response Success (200):**\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"Judul Post\",\n    \"content\": \"Konten post\",\n    \"userId\": 1,\n    \"user\": {\n      \"id\": 1,\n      \"email\": \"user@mail.com\"\n    },\n    \"createdAt\": \"2025-02-08T...\",\n    \"updatedAt\": \"2025-02-08T...\"\n  }\n]\n```"
+          }
+        },
+        {
+          "name": "Get Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/posts/1",
+            "description": "Mendapatkan detail post berdasarkan ID.\n\n**URL Parameters:**\n- `id` (number, required): ID post\n\n**Response Success (200):**\nObject post beserta data user pembuat"
+          }
+        },
+        {
+          "name": "Update Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Judul Post Diperbarui\",\n  \"content\": \"Konten post yang diperbarui\"\n}"
+            },
+            "url": "{{base_url}}/posts/1",
+            "description": "Memperbarui post. **Membutuhkan JWT Token**\n\n**URL Parameters:**\n- `id` (number, required): ID post yang akan diupdate\n\n**Request Body (semua optional):**\n- `title` (string, optional): Judul baru\n- `content` (string, optional): Konten baru"
+          }
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/posts/1",
+            "description": "Menghapus post. **Membutuhkan JWT Token**\n\n**URL Parameters:**\n- `id` (number, required): ID post yang akan dihapus\n\n**Response Success (200):**\n```json\n{\n  \"message\": \"Berhasil di hapus post dengan id 1\"\n}\n```"
+          }
+        }
+      ]
+    }
+  ]
+}
