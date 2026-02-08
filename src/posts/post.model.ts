@@ -1,24 +1,33 @@
-import {
-  Table,
-  Column,
-  Model,
-  ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import type {
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from 'sequelize';
 import { User } from '../users/user.model';
 
-@Table
-export class Post extends Model<Post> {
-  @Column
-  title: string;
+@Table({ tableName: 'posts' })
+export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  declare id: CreationOptional<number>;
 
-  @Column
-  content: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare title: string;
+
+  @Column(DataType.TEXT)
+  declare content: string;
 
   @ForeignKey(() => User)
-  @Column
-  userId: number;
+  @Column(DataType.INTEGER)
+  declare userId: number;
 
   @BelongsTo(() => User)
-  user: User;
+  declare user: CreationOptional<User>;
 }
